@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuiz Membaca BM Tahun 2 - Nilai Murni Asas Integriti</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#0284C7',
+                            lightbg: '#F0F9FF',
+                            gold: '#F59E0B',
+                            teal: '#0D9488'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .btn-bounce {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        .heart-pop {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+        }
+        .bg-pattern {
+            background-image: radial-gradient(#0284c7 0.75px, transparent 0.75px), radial-gradient(#0284c7 0.75px, #f0f9ff 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.15;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between relative overflow-x-hidden text-slate-800">
+
+    <!-- Background Texture -->
+    <div class="absolute inset-0 bg-pattern pointer-events-none z-0"></div>
+
+    <header class="relative z-10 w-full max-w-4xl mx-auto p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="bg-sky-600 text-white p-3 rounded-2xl shadow-lg transform -rotate-2">
+                <i class="fa-solid fa-book-open-reader text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-sky-900 tracking-wide drop-shadow-sm">Kemahiran Membaca</h1>
+                <p class="text-xs sm:text-sm font-semibold text-sky-700">Bahasa Melayu Tahun 2 • Nilai Murni Asas Integriti</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="toggleSound()" id="soundBtn" class="bg-white/90 hover:bg-white text-slate-700 p-3 rounded-xl shadow-md transition border border-sky-200" title="Suara / Sound Effects">
+                <i class="fa-solid fa-volume-high text-lg text-sky-600" id="soundIcon"></i>
+            </button>
+            <button onclick="showLeaderboard()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl shadow-md transition flex items-center gap-2 text-sm sm:text-base border-b-4 border-amber-600 active:translate-y-1">
+                <i class="fa-solid fa-trophy text-amber-800"></i>
+                <span class="hidden sm:inline">Papan Markah</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl">
+
+            <!-- SCREEN 1: WELCOME / ENTER NAME -->
+            <div id="startScreen" class="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-sky-300 text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-36 h-36 bg-sky-200 rounded-full blur-2xl opacity-60"></div>
+                
+                <div class="inline-block bg-sky-100 text-sky-800 px-4 py-1.5 rounded-full text-sm font-bold mb-3 shadow-inner">
+                    <i class="fa-solid fa-book-bookmark mr-1"></i> Petikan Buku Teks m/s 125
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3 font-heading">
+                    Kuiz Membaca & <span class="text-sky-600">Nilai Murni!</span> 📖
+                </h2>
+                <p class="text-slate-600 mb-6 text-sm sm:text-base leading-relaxed">
+                    Mari uji kefahaman membaca berdasarkan petikan <strong>"Nilai Murni Asas Integriti"</strong>. Jawab 10 soalan dengan betul untuk kumpul sijil digital!
+                </p>
+
+                <!-- Input Name Form -->
+                <div class="max-w-md mx-auto mb-6">
+                    <label for="playerName" class="block text-left text-sm font-bold text-slate-700 mb-2">
+                        <i class="fa-solid fa-user-pen text-sky-600 mr-1"></i> Nama Penuh Murid:
+                    </label>
+                    <input type="text" id="playerName" placeholder="Tulis nama anda di sini..." 
+                           class="w-full px-5 py-3.5 text-lg rounded-2xl border-2 border-sky-300 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 outline-none transition shadow-inner font-semibold text-slate-800">
+                    <p id="nameError" class="text-rose-500 text-xs text-left mt-1.5 hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Sila masukkan nama terlebih dahulu!</p>
+                </div>
+
+                <!-- Info Box -->
+                <div class="grid grid-cols-3 gap-3 mb-6 max-w-md mx-auto text-center">
+                    <div class="bg-sky-50 p-3 rounded-2xl border border-sky-200">
+                        <div class="text-sky-600 font-bold text-lg"><i class="fa-solid fa-circle-question"></i> 10</div>
+                        <div class="text-xs text-slate-500 font-bold">Soalan</div>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200">
+                        <div class="text-rose-500 font-bold text-lg"><i class="fa-solid fa-heart"></i> 3</div>
+                        <div class="text-xs text-slate-500 font-bold">Nyawa</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                        <div class="text-amber-500 font-bold text-lg"><i class="fa-solid fa-star"></i> 100</div>
+                        <div class="text-xs text-slate-500 font-bold">Markah Maksimum</div>
+                    </div>
+                </div>
+
+                <button onclick="startGame()" class="w-full max-w-md bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xl py-4 rounded-2xl shadow-lg border-b-4 border-sky-800 btn-bounce transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play text-2xl"></i> MULA BACA & JAWAB
+                </button>
+            </div>
+
+            <div id="quizScreen" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-5 sm:p-8 shadow-2xl border-4 border-sky-300 relative">
+                
+                <!-- Status Bar: Progress, Hearts, Score -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-5 bg-slate-100/90 p-3.5 rounded-2xl border border-slate-200">
+                    <div class="flex items-center gap-3 flex-1 min-w-[180px]">
+                        <span class="text-xs sm:text-sm font-bold text-slate-600" id="questionNumText">Soalan 1/10</span>
+                        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                            <div id="progressBar" class="bg-sky-500 h-3 rounded-full transition-all duration-300" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-200" id="heartsContainer">
+                        <i class="fa-solid fa-heart text-rose-500 text-lg heart-pop"></i>
+                        <i class="fa-solid fa-heart text-rose-500 text-lg heart-pop"></i>
+                        <i class="fa-solid fa-heart text-rose-500 text-lg heart-pop"></i>
+                    </div>
+
+                    <div class="bg-amber-100 text-amber-900 font-extrabold px-3.5 py-1 rounded-xl text-sm sm:text-base border border-amber-300 shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-amber-500"></i>
+                        <span id="scoreText">0</span> Markah
+                    </div>
+                </div>
+
+                <!-- Text Drawer Accordion -->
+                <div class="mb-5 bg-gradient-to-r from-sky-50 to-teal-50 p-4 rounded-2xl border border-sky-200">
+                    <button onclick="toggleTextDrawer()" class="w-full flex items-center justify-between font-bold text-xs sm:text-sm text-sky-900 focus:outline-none">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-sky-600 text-base"></i> Rujukan Petikan Teks "Nilai Murni Asas Integriti"
+                        </span>
+                        <i class="fa-solid fa-chevron-down transition-transform duration-200" id="drawerIcon"></i>
+                    </button>
+                    <div id="textDrawer" class="mt-3 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium bg-white/80 p-3.5 rounded-xl border border-sky-100 max-h-48 overflow-y-auto">
+                        <p class="mb-2"><strong>Nilai Murni Asas Integriti:</strong> Nilai murni bermaksud perlakuan baik yang diamalkan terhadap orang lain. Contoh perlakuan baik ialah saling menghormati dan beradab mulia. Nilai sebegini perlu dipupuk bagi membina asas integriti yang kukuh dalam diri seseorang.</p>
+                        <p class="mb-2">Setiap orang perlu membiasakan diri untuk mengamalkan nilai murni. Kita harus membiasakan diri untuk melakukan sesuatu tanpa mengharapkan balasan. Contohnya, menolong kawan atau jiran semasa mereka dalam kesusahan.</p>
+                        <p class="mb-2">Nilai murni bukan setakat diamalkan sesama manusia, malahan kita juga harus bersikap baik terhadap flora dan fauna serta menjaga kemudahan awam. Misalnya, memberikan perlindungan kepada kucing-kucing yang terbiar dan tidak merosakkan tumbuh-tumbuhan di sekeliling kita.</p>
+                        <p>Sekiranya semua orang mengamalkan nilai murni, pasti kita akan mempunyai integriti yang tinggi. Kehidupan kita akan menjadi aman dan sejahtera.</p>
+                    </div>
+                </div>
+
+                <!-- Question Text -->
+                <div class="mb-6">
+                    <span class="inline-block bg-sky-600 text-white font-bold text-xs px-3 py-1 rounded-lg mb-2" id="qCategory">Pemahaman Bacaan</span>
+                    <h3 id="questionText" class="text-lg sm:text-xl font-bold text-slate-800 leading-snug">
+                        Loading soalan...
+                    </h3>
+                </div>
+
+                <!-- Multiple Choice Options Grid -->
+                <div id="optionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+                    <!-- Options Inserted Dynamically -->
+                </div>
+
+                <!-- Instant Feedback Area -->
+                <div id="feedbackBox" class="hidden p-4 rounded-2xl mb-4 text-center font-bold text-sm sm:text-base flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2" id="feedbackMessage">
+                        <!-- Message -->
+                    </div>
+                    <button id="nextBtn" onclick="nextQuestion()" class="bg-sky-600 text-white hover:bg-sky-700 px-5 py-2.5 rounded-xl text-sm font-extrabold shadow-md transition btn-bounce">
+                        Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultScreen" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-sky-300 text-center relative">
+                
+                <div id="resultHeader">
+                    <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-3 shadow-inner border-2 border-amber-300">
+                        <i class="fa-solid fa-award" id="resultIcon"></i>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-slate-800 font-heading mb-1" id="resultTitle">Tahniah!</h2>
+                    <p class="text-slate-600 text-sm mb-4" id="resultSubtitle">Kamu telah menyempurnakan Kuiz Membaca BM Tahun 2!</p>
+                </div>
+
+                <!-- Final Score Badge -->
+                <div class="bg-sky-50 rounded-2xl p-4 border border-sky-200 max-w-sm mx-auto mb-6 flex justify-around items-center">
+                    <div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Markah Akhir</div>
+                        <div class="text-3xl font-extrabold text-sky-600" id="finalScoreText">100 / 100</div>
+                    </div>
+                    <div class="h-10 w-px bg-sky-200"></div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Gred</div>
+                        <div class="text-3xl font-extrabold text-amber-500" id="finalGradeText">A+</div>
+                    </div>
+                </div>
+
+                <!-- CERTIFICATE CANVAS CONTAINER -->
+                <div id="certificateWrapper" class="mb-6 overflow-hidden rounded-2xl border-2 border-amber-300 shadow-md bg-white p-2">
+                    <h4 class="text-xs font-bold text-amber-700 mb-1 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-certificate"></i> Sijil Pencapaian Rasmi Digital
+                    </h4>
+                    <canvas id="certCanvas" width="800" height="560" class="w-full h-auto rounded-lg border border-slate-200"></canvas>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                    <button onclick="downloadCertificate()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold py-3.5 px-4 rounded-2xl shadow-md border-b-4 border-amber-700 btn-bounce transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-download text-lg"></i> Muat Turun Sijil
+                    </button>
+                    <button onclick="restartGame()" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-extrabold py-3.5 px-4 rounded-2xl shadow-md border-b-4 border-sky-800 btn-bounce transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-rotate-right text-lg"></i> Cuba Lagi
+                    </button>
+                    <button onclick="showLeaderboard()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-3.5 px-4 rounded-2xl shadow-md border-b-4 border-teal-800 btn-bounce transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-list-ol text-lg"></i> Kedudukan
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="leaderboardModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-amber-300 relative transform transition-all">
+            <button onclick="closeLeaderboard()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center font-bold">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <div class="inline-block bg-amber-100 text-amber-800 p-3 rounded-2xl mb-2">
+                    <i class="fa-solid fa-trophy text-3xl text-amber-500"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-slate-800 font-heading">Papan Markah Kelas</h3>
+                <p class="text-xs text-slate-500">Semakan Kedudukan Murid Bahasa Melayu Tahun 2</p>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="max-h-60 overflow-y-auto mb-4 pr-1">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase">
+                            <th class="py-2 px-2 text-center">#</th>
+                            <th class="py-2 px-2">Nama Murid</th>
+                            <th class="py-2 px-2 text-right">Markah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody" class="text-sm font-semibold divide-y divide-slate-100">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span><i class="fa-solid fa-circle-info text-sky-500"></i> Disimpan secara tempatan</span>
+                <button onclick="resetLeaderboard()" class="text-rose-500 hover:underline font-bold">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Padam Rekod (Cikgu)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-4 text-xs font-semibold text-sky-800/80">
+        Bahasa Melayu Tahun 2 • Kemahiran Membaca: Nilai Murni Asas Integriti (Buku Teks m/s 125)
+    </footer>
+
+    <script>
+        // EXACTLY 10 READING COMPREHENSION QUESTIONS BASED ON TEXTBOOK PAGE 125
+        const quizQuestions = [
+            {
+                question: "Apakah maksud nilai murni mengikut petikan teks?",
+                options: [
+                    "Perlakuan baik yang diamalkan terhadap orang lain",
+                    "Perlakuan yang suka marah kepada kawan",
+                    "Perlakuan yang pentingkan diri sendiri",
+                    "Perlakuan yang mahukan hadiah mahal"
+                ],
+                correct: 0,
+                hint: "Perhatikan perenggan pertama petikan."
+            },
+            {
+                question: "Apakah contoh perlakuan baik yang dinyatakan dalam perenggan pertama?",
+                options: [
+                    "Saling bermusuhan dan membenci",
+                    "Saling menghormati dan beradab mulia",
+                    "Berbuat bising di dalam kelas",
+                    "Suka mengusik kawan-kawan"
+                ],
+                correct: 1,
+                hint: "Saling menghormati dan..."
+            },
+            {
+                question: "Mengapakah nilai murni perlu dipupuk dalam diri seseorang?",
+                options: [
+                    "Untuk membina asas integriti yang kukuh",
+                    "Untuk dipuji oleh jiran-jiran",
+                    "Untuk mendapat wang ringgit",
+                    "Untuk memenangi pertandingan"
+                ],
+                correct: 0,
+                hint: "...membina asas integriti yang kukuh dalam diri."
+            },
+            {
+                question: "Bagaimanakah cara kita membiasakan diri apabila mengamalkan nilai murni?",
+                options: [
+                    "Melakukan sesuatu dengan mengharapkan balasan",
+                    "Melakukan sesuatu tanpa mengharapkan balasan",
+                    "Menolong orang jika dibayar upah",
+                    "Menolong orang yang kaya sahaja"
+                ],
+                correct: 1,
+                hint: "Ikhlas menolong tanpa minta balasan."
+            },
+            {
+                question: "Antara berikut, yang manakah contoh menolong orang dalam kesusahan?",
+                options: [
+                    "Menolong kawan atau jiran",
+                    "Membiarkan jiran mengangkat barang berat",
+                    "Mentertawakan kawan yang jatuh",
+                    "Merampas barang kepunyaan jiran"
+                ],
+                correct: 0,
+                hint: "Menolong kawan atau jiran semasa mereka kesusahan."
+            },
+            {
+                question: "Nilai murni bukan setakat diamalkan sesama manusia, malahan terhadap...",
+                options: [
+                    "Flora dan fauna serta kemudahan awam",
+                    "Makanan dan minuman sahaja",
+                    "Kenderaan mewah sahaja",
+                    "Pakaian cantik sahaja"
+                ],
+                correct: 0,
+                hint: "Tumbuh-tumbuhan (flora) dan haiwan (fauna)."
+            },
+            {
+                question: "Bagaimanakah sikap bersikap baik terhadap fauna berdasarkan petikan?",
+                options: [
+                    "Memberikan perlindungan kepada kucing yang terbiar",
+                    "Menangkap burung untuk dikurung",
+                    "Menakutkan kucing-kucing di tepi jalan",
+                    "Membiarkan haiwan kelaparan"
+                ],
+                correct: 0,
+                hint: "Memberikan perlindungan kepada kucing terbiar."
+            },
+            {
+                question: "Bagaimanakah cara kita bersikap baik terhadap flora di sekeliling kita?",
+                options: [
+                    "Tidak merosakkan tumbuh-tumbuhan",
+                    "Memetik bunga sesuka hati",
+                    "Memotong pokok tanpa sebab",
+                    "Memijak rumput hiasan"
+                ],
+                correct: 0,
+                hint: "Tidak merosakkan tumbuh-tumbuhan di sekeliling."
+            },
+            {
+                question: "Apakah yang akan berlaku sekiranya semua orang mengamalkan nilai murni?",
+                options: [
+                    "Kita akan mempunyai integriti yang tinggi",
+                    "Masyarakat akan sentiasa bergaduh",
+                    "Kehidupan menjadi huru-hara",
+                    "Kemudahan awam cepat rosak"
+                ],
+                correct: 0,
+                hint: "...pasti kita akan mempunyai integriti yang tinggi."
+            },
+            {
+                question: "Apakah kesan amalan nilai murni terhadap kehidupan masyarakat?",
+                options: [
+                    "Kehidupan menjadi aman dan sejahtera",
+                    "Kehidupan menjadi sunyi dan sedih",
+                    "Orang ramai menjadi sombong",
+                    "Kehidupan menjadi sukar"
+                ],
+                correct: 0,
+                hint: "Kehidupan kita akan menjadi aman dan sejahtera."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let lives = 3;
+        let playerName = "";
+        let soundEnabled = true;
+
+        const synth = new Tone.Synth().toDestination();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                Tone.start();
+                if (type === 'correct') {
+                    const now = Tone.now();
+                    synth.triggerAttackRelease("C5", "8n", now);
+                    synth.triggerAttackRelease("E5", "8n", now + 0.1);
+                    synth.triggerAttackRelease("G5", "8n", now + 0.2);
+                } else if (type === 'wrong') {
+                    const now = Tone.now();
+                    synth.triggerAttackRelease("G3", "8n", now);
+                    synth.triggerAttackRelease("C3", "8n", now + 0.15);
+                } else if (type === 'win') {
+                    const now = Tone.now();
+                    synth.triggerAttackRelease("C4", "8n", now);
+                    synth.triggerAttackRelease("E4", "8n", now + 0.1);
+                    synth.triggerAttackRelease("G4", "8n", now + 0.2);
+                    synth.triggerAttackRelease("C5", "4n", now + 0.3);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-lg text-sky-600";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-lg text-slate-400";
+            }
+        }
+
+        function toggleTextDrawer() {
+            const drawer = document.getElementById('textDrawer');
+            const icon = document.getElementById('drawerIcon');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                drawer.classList.add('hidden');
+                icon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('playerName');
+            playerName = nameInput.value.trim();
+
+            if (!playerName) {
+                document.getElementById('nameError').classList.remove('hidden');
+                nameInput.focus();
+                return;
+            }
+
+            document.getElementById('nameError').classList.add('hidden');
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            lives = 3;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            updateStatusBar();
+            loadQuestion();
+        }
+
+        function updateStatusBar() {
+            document.getElementById('scoreText').innerText = score;
+            document.getElementById('questionNumText').innerText = `Soalan ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+            
+            const progressPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            const heartsContainer = document.getElementById('heartsContainer');
+            heartsContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < lives) {
+                    heartsContainer.innerHTML += `<i class="fa-solid fa-heart text-rose-500 text-lg heart-pop"></i>`;
+                } else {
+                    heartsContainer.innerHTML += `<i class="fa-regular fa-heart text-slate-300 text-lg"></i>`;
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const q = quizQuestions[currentQuestionIndex];
+            document.getElementById('questionText').innerText = `${currentQuestionIndex + 1}. ${q.question}`;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            document.getElementById('feedbackBox').classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn bg-slate-50 hover:bg-sky-50 hover:border-sky-400 border-2 border-slate-200 text-slate-800 font-bold p-4 rounded-2xl text-left text-sm sm:text-base transition-all btn-bounce shadow-sm flex items-center justify-between";
+                btn.onclick = () => checkAnswer(idx);
+                btn.innerHTML = `
+                    <span class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-extrabold text-sm flex-shrink-0">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt}</span>
+                    </span>
+                    <i class="fa-regular fa-circle text-slate-300 text-lg check-icon flex-shrink-0 ml-2"></i>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = quizQuestions[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => btn.disabled = true);
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackMessage = document.getElementById('feedbackMessage');
+            feedbackBox.classList.remove('hidden');
+
+            if (selectedIndex === q.correct) {
+                playSound('correct');
+                score += 10;
+                buttons[selectedIndex].className = "option-btn bg-emerald-100 border-2 border-emerald-500 text-emerald-900 font-bold p-4 rounded-2xl text-left text-sm sm:text-base shadow-md flex items-center justify-between";
+                buttons[selectedIndex].querySelector('.check-icon').className = "fa-solid fa-circle-check text-emerald-600 text-xl flex-shrink-0 ml-2";
+
+                feedbackBox.className = "p-4 rounded-2xl mb-4 text-center font-bold text-sm sm:text-base flex items-center justify-between transition-all bg-emerald-100 text-emerald-900 border border-emerald-300";
+                feedbackMessage.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i> Syabas! Jawapan anda BETUL (+10 Markah)`;
+            } else {
+                playSound('wrong');
+                lives--;
+                buttons[selectedIndex].className = "option-btn bg-rose-100 border-2 border-rose-400 text-rose-900 font-bold p-4 rounded-2xl text-left text-sm sm:text-base shadow-md flex items-center justify-between";
+                buttons[selectedIndex].querySelector('.check-icon').className = "fa-solid fa-circle-xmark text-rose-500 text-xl flex-shrink-0 ml-2";
+
+                buttons[q.correct].className = "option-btn bg-emerald-50 border-2 border-emerald-400 text-emerald-800 font-bold p-4 rounded-2xl text-left text-sm sm:text-base shadow-md flex items-center justify-between";
+
+                feedbackBox.className = "p-4 rounded-2xl mb-4 text-center font-bold text-sm sm:text-base flex items-center justify-between transition-all bg-rose-100 text-rose-900 border border-rose-300";
+                feedbackMessage.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 text-xl"></i> Kurang tepat. Jawapan betul ialah: <strong>${q.options[q.correct]}</strong>`;
+            }
+
+            updateStatusBar();
+
+            if (lives <= 0) {
+                document.getElementById('nextBtn').innerText = "Lihat Keputusan";
+            }
+        }
+
+        function nextQuestion() {
+            if (lives <= 0 || currentQuestionIndex >= quizQuestions.length - 1) {
+                endGame();
+            } else {
+                currentQuestionIndex++;
+                updateStatusBar();
+                loadQuestion();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            document.getElementById('finalScoreText').innerText = `${score} / 100`;
+
+            let grade = "C";
+            let title = "Boleh Cuba Lagi!";
+            let subtitle = "Bagus usaha anda, teruskan membaca petikan ini.";
+
+            if (score >= 80) {
+                grade = "A+";
+                title = "Tahniah! Cemerlang 🎉";
+                subtitle = "Anda memang bijak dan faham petikan Nilai Murni Asas Integriti!";
+                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+                playSound('win');
+            } else if (score >= 50) {
+                grade = "B";
+                title = "Syabas! Bagus 👍";
+                subtitle = "Pencapaian yang baik, tingkatkan lagi kefahaman anda.";
+            }
+
+            document.getElementById('finalGradeText').innerText = grade;
+            document.getElementById('resultTitle').innerText = title;
+            document.getElementById('resultSubtitle').innerText = subtitle;
+
+            saveToLeaderboard(playerName, score);
+            generateCertificate(playerName, score, grade);
+        }
+
+        function generateCertificate(name, score, grade) {
+            const canvas = document.getElementById('certCanvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "#0284C7";
+            ctx.lineWidth = 12;
+            ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+            ctx.strokeStyle = "#F59E0B";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(26, 26, canvas.width - 52, canvas.height - 52);
+
+            ctx.fillStyle = "#F0F9FF";
+            ctx.fillRect(35, 35, canvas.width - 70, 90);
+
+            ctx.fillStyle = "#0369A1";
+            ctx.font = "bold 32px Fredoka, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("SIJIL PENCAPAAN DIGITAL", canvas.width / 2, 75);
+
+            ctx.fillStyle = "#0284C7";
+            ctx.font = "bold 18px Quicksand, sans-serif";
+            ctx.fillText("BAHASA MELAYU TAHUN 2 • KEMAHIRAN MEMBACA", canvas.width / 2, 105);
+
+            ctx.fillStyle = "#475569";
+            ctx.font = "500 18px Quicksand, sans-serif";
+            ctx.fillText("Dengan ini diperakukan bahawa", canvas.width / 2, 175);
+
+            ctx.fillStyle = "#0F172A";
+            ctx.font = "bold 36px Fredoka, sans-serif";
+            ctx.fillText(name.toUpperCase(), canvas.width / 2, 230);
+
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 180, 245);
+            ctx.lineTo(canvas.width / 2 + 180, 245);
+            ctx.strokeStyle = "#0284C7";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = "#334155";
+            ctx.font = "500 18px Quicksand, sans-serif";
+            ctx.fillText(`Telah menyempurnakan Kuiz "Nilai Murni Asas Integriti" dengan pencapaian:`, canvas.width / 2, 290);
+
+            ctx.fillStyle = "#FEF3C7";
+            ctx.strokeStyle = "#F59E0B";
+            ctx.lineWidth = 2;
+            ctx.roundRect(canvas.width / 2 - 140, 320, 280, 75, 15);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "#B45309";
+            ctx.font = "bold 22px Fredoka, sans-serif";
+            ctx.fillText(`MARKAH: ${score} / 100  (GRED: ${grade})`, canvas.width / 2, 365);
+
+            const today = new Date().toLocaleDateString('ms-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            ctx.fillStyle = "#64748B";
+            ctx.font = "14px Quicksand, sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText(`Tarikh: ${today}`, 60, 480);
+
+            ctx.textAlign = "right";
+            ctx.fillText(`Panitia Bahasa Melayu Tahun 2`, canvas.width - 60, 480);
+
+            ctx.fillStyle = "#0284C7";
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, 470, 28, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 20px FontAwesome";
+            ctx.textAlign = "center";
+            ctx.fillText("✓", canvas.width / 2, 477);
+        }
+
+        function downloadCertificate() {
+            const canvas = document.getElementById('certCanvas');
+            const image = canvas.toDataURL("image/png");
+            
+            const link = document.createElement('a');
+            link.download = `Sijil_Nilai_Murni_${playerName.replace(/\s+/g, '_')}.png`;
+            link.href = image;
+            link.click();
+        }
+
+        function getLeaderboardData() {
+            try {
+                const data = localStorage.getItem('bm_tahun2_leaderboard');
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.log("LocalStorage read error:", e);
+                return [];
+            }
+        }
+
+        function saveToLeaderboard(name, finalScore) {
+            if (!name) return;
+            let list = getLeaderboardData();
+            
+            list.push({
+                name: name,
+                score: finalScore,
+                date: new Date().toLocaleDateString('ms-MY')
+            });
+
+            list.sort((a, b) => b.score - a.score);
+            list = list.slice(0, 20);
+
+            try {
+                localStorage.setItem('bm_tahun2_leaderboard', JSON.stringify(list));
+            } catch (e) {
+                console.log("LocalStorage write error:", e);
+            }
+        }
+
+        function renderLeaderboard() {
+            const body = document.getElementById('leaderboardBody');
+            const list = getLeaderboardData();
+
+            if (list.length === 0) {
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="py-4 text-center text-slate-400 italic">
+                            Belum ada rekod markah murid.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            body.innerHTML = list.map((item, idx) => {
+                let badge = `<span class="font-bold text-slate-500">${idx + 1}</span>`;
+                if (idx === 0) badge = `<i class="fa-solid fa-trophy text-amber-500 text-base"></i>`;
+                else if (idx === 1) badge = `<i class="fa-solid fa-medal text-slate-400 text-base"></i>`;
+                else if (idx === 2) badge = `<i class="fa-solid fa-award text-amber-700 text-base"></i>`;
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-2 text-center font-bold">${badge}</td>
+                        <td class="py-2.5 px-2 text-slate-800 font-bold">${escapeHtml(item.name)}</td>
+                        <td class="py-2.5 px-2 text-right text-sky-600 font-extrabold">${item.score} pt</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showLeaderboard() {
+            renderLeaderboard();
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        function closeLeaderboard() {
+            document.getElementById('leaderboardModal').classList.add('hidden');
+        }
+
+        function resetLeaderboard() {
+            if (confirm("Adakah anda pasti mahu memadam semua rekod markah murid?")) {
+                try {
+                    localStorage.removeItem('bm_tahun2_leaderboard');
+                    renderLeaderboard();
+                } catch (e) {
+                    console.log("Clear error:", e);
+                }
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Polyfill for Canvas roundRect in older browsers
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+                if (typeof r === 'number') r = [r, r, r, r];
+                const [tl, tr, br, bl] = r;
+                this.beginPath();
+                this.moveTo(x + tl, y);
+                this.lineTo(x + w - tr, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + tr);
+                this.lineTo(x + w, y + h - br);
+                this.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+                this.lineTo(x + bl, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - bl);
+                this.lineTo(x, y + tl);
+                this.quadraticCurveTo(x, y, x + tl, y);
+                this.closePath();
+                return this;
+            };
+        }
+    </script>
+</body>
+</html>
